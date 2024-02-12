@@ -32,9 +32,9 @@ async def dl_from(client: CypherClient, msg: Message):
         "**Select what you want to do 🤗**",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("Download 💾", callback_data=f"dwn_mg-{_mid}")],
-                [InlineKeyboardButton("Info ℹ️", callback_data=f"info_mg-{_mid}")],
-                [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{_usr}")],
+                [InlineKeyboardButton("Download", callback_data=f"dwn_mg-{_mid}")],
+                [InlineKeyboardButton("Info", callback_data=f"info_mg-{_mid}")],
+                [InlineKeyboardButton("Cancel", callback_data=f"cancelqcb-{_usr}")],
             ]
         ),
     )
@@ -60,7 +60,7 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
         udoc = await client.database.is_there(qusr, True)
         if not udoc and re.match(prv_rgx, url):
             return await query.edit_message_text(
-                "`You must be logged in first to download this file 😑`"
+                "`You must be logged in first to download this file. because it is private link`"
             )
         if udoc:
             email = client.cipher.decrypt(udoc["email"]).decode()
@@ -74,7 +74,7 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
 
     # Download the file/folder
     resp = await query.edit_message_text(
-        "`Your download is starting 📥...`", reply_markup=None
+        "`Downloading...`", reply_markup=None
     )
 
     cli = MegaTools(client, conf)
@@ -95,7 +95,7 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
     if not f_list:
         return
 
-    await query.edit_message_text("`Successfully downloaded the content 🥳`")
+    await query.edit_message_text("`Successfully downloaded`")
     # update download count
     await client.database.plus_fl_count(qusr, downloads=len(f_list))
     # Send file(s) to the user
@@ -105,7 +105,7 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
         qcid,
         resp.id,
         reply_to_message_id=_mid,
-        caption=f"**Join @NexaBotsUpdates ❤️**",
+        caption=f"**share and support @MegaNzDownloaderBot . @UnZipFreeBot**",
     )
     await client.full_cleanup(dlid, qusr)
     await resp.delete()
